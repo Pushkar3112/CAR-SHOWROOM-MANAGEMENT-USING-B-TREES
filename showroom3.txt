@@ -1,68 +1,81 @@
-20 10 5
-501 Mahindra_Thar Black 0 3 1500000
-502 Force_Gurkha Green 0 3 1400000
-503 Isuzu_DMax Silver 0 3 2000000
-504 Toyota_Hilux White 0 3 2500000
-505 Jeep_Wrangler Red 0 3 5500000
-506 Land_Rover_Defender Grey 0 3 8000000
-507 Mercedes_GWagon Black 0 3 20000000
-508 Suzuki_Jimny Yellow 0 3 1200000
-509 Ford_Ranger Blue 0 3 2200000
-510 Toyota_LandCruiser White 0 3 9000000
+Available Cars
+VIN,Name,Color,Price,FuelType,CarType
+3001,Maruti Alto,Red,400000.00,Petrol,Hatchback
+3002,Hyundai Santro,Blue,500000.00,Petrol,Hatchback
+3003,Tata Tiago,White,600000.00,Petrol,Hatchback
+3004,Renault Kwid,Black,350000.00,Petrol,Hatchback
+3005,Datsun Go,Silver,450000.00,Petrol,Hatchback
+3006,Honda Brio,Grey,700000.00,Petrol,Hatchback
+3007,Ford Figo,Brown,800000.00,Petrol,Hatchback
+3008,Volkswagen Polo,Yellow,900000.00,Petrol,Hatchback
+3009,Skoda Rapid,Orange,1000000.00,Petrol,Sedan
+3010,Nissan Micra,Green,800000.00,Petrol,Hatchback
+3011,Toyota Yaris,Purple,950000.00,Petrol,Sedan
+3012,Mahindra KUV100,Maroon,600000.00,Petrol,Hatchback
+3013,Fiat Punto,Gold,750000.00,Petrol,Hatchback
+3014,Chevrolet Beat,Navy Blue,500000.00,Petrol,Hatchback
+3015,Mitsubishi Mirage,Pink,800000.00,Petrol,Hatchback
+1041,Maruti Swift,Red,850000.00,Petrol,Hatchback
+1042,Hyundai Grand i10,White,750000.00,Petrol,Hatchback
+1043,Ford Figo,Silver,700000.00,Petrol,Hatchback
+1044,Volkswagen Ameo,Blue,950000.00,Diesel,Sedan
+1045,Honda Amaze,Grey,800000.00,Petrol,Sedan
 
-601 Honda_City White 0 0 1500000 Mark_Wilson 1200000 14000 15 1 2024 15 4 2024 1 1 2025  
-602 Tata_Nexon Grey 0 1 1200000 Angela_Davis 1100000 13000 10 2 2024 10 5 2024 1 2 2025  
-603 BMW_i8 Red 0 2 15000000 Steven_Taylor 12500000 180000 20 1 2024 20 4 2024 15 1 2025  
-604 Toyota_Fortuner Grey 0 3 3500000 Rachel_Brown 3000000 28000 5 2 2024 5 5 2024 1 3 2025  
-605 Ford_Endeavour Blue 0 3 3800000 Justin_Moore 3200000 30000 12 1 2024 12 4 2024 1 1 2025  
-606 Hyundai_Creta Black 0 0 1600000 Sophia_Lane 1350000 15000 18 2 2024 18 5 2024 1 3 2025  
-607 Kia_Seltos White 0 0 1700000 James_Watson 1450000 16000 25 1 2024 25 4 2024 15 2 2025  
-608 Audi_A4 Blue 0 2 4200000 Emma_Carter 3500000 50000 3 2 2024 3 5 2024 1 3 2025  
-609 Jeep_GrandCherokee Red 0 3 6500000 Daniel_Bryant 5200000 48000 6 1 2024 6 4 2024 1 1 2025  
-610 Mahindra_XUV700 Grey 0 3 2900000 Olivia_Parker 2400000 24000 8 1 2024 8 4 2024 1 3 2025  
-611 Toyota_Corolla Silver 0 0 1800000 Brian_Miller 1500000 20000 15 1 2024 15 4 2024 1 1 2025  
-612 Volvo_XC40 White 0 2 4300000 Laura_Jones 3600000 52000 12 2 2024 12 5 2024 1 3 2025  
-613 Mercedes_Benz Red 0 2 7500000 Ethan_Wright 6200000 55000 22 1 2024 22 4 2024 1 2 2025  
-614 Nissan_Terrano Silver 0 1 2800000 Zoe_Taylor 2400000 26000 25 2 2024 25 5 2024 1 3 2025  
-615 Ford_Ranger White 0 3 2200000 Charlie_Lopez 2000000 23000 18 1 2024 18 4 2024 15 2 2025  
-616 Honda_WRV Grey 0 1 1500000 Alice_Williams 1200000 14000 5 1 2024 5 4 2024 1 3 2025  
-617 Land_Rover_Discovery Red 0 3 7800000 Oscar_Hughes 6400000 56000 8 2 2024 8 5 2024 1 3 2025  
-618 Hyundai_Venue White 0 1 1400000 Lily_Cook 1100000 12000 10 1 2024 10 4 2024 1 3 2025  
-619 Maruti_Baleno Silver 0 0 900000 Jacob_Bell 800000 10000 3 2 2024 3 5 2024 1 1 2025  
-620 Skoda_Kushaq Grey 0 1 1900000 Ava_Robinson 1600000 17000 18 2 2024 18 5 2024 1 2 2025  
+Salespersons
+ID,Name,SalesTarget,SalesAchieved
+4001,Rakesh Kumar,5000000.00,4500000.00
+4002,Pooja Sharma,6000000.00,5500000.00
+4003,Manoj Verma,7000000.00,6000000.00
+4004,Seema Reddy,8000000.00,7500000.00
+4005,Vijay Sahu,9000000.00,8500000.00
+2011,Divya Sharma,5500000.00,5000000.00
+2012,Ravi Verma,6500000.00,6000000.00
+2013,Neha Gupta,7500000.00,7000000.00
+2014,Suresh Patel,8500000.00,8000000.00
+2015,Anita Joshi,9500000.00,9000000.00
 
-5  
-Ryan_Thompson 3001 19891105 "147_Hill_Road" 24 22  
-4  
-15 1 2024 14000 Honda_City 0  
-18 2 2024 15000 Hyundai_Creta 0  
-22 1 2024 23000 Ford_Ranger 3  
-25 1 2024 16000 Kia_Seltos 0  
+Customers
+CustomerID,Name,MobileNo,Address,RegistrationNo,PaymentType,CarVIN,SalespersonID
+5001,Arun Sharma,9876543240,123 Main St,REG031,emi-48,3001,4001
+5002,Deepika Roy,9876543241,456 Oak Ave,REG032,cash,3002,4002
+5003,Vikram Gupta,9876543242,789 Pine Rd,REG033,emi-36,3003,4003
+5004,Sneha Verma,9876543243,321 Elm St,REG034,cash,3004,4004
+5005,Ravi Kumar,9876543244,654 Maple Ave,REG035,emi-48,3005,4005
+5006,Anita Patel,9876543245,987 Cedar Rd,REG036,cash,3006,4001
+5007,Sunil Joshi,9876543246,210 Birch St,REG037,emi-36,3007,4002
+5008,Meena Gupta,9876543247,302 Oak Ave,REG038,cash,3008,4003
+5009,Rakesh Singh,9876543248,403 Pine Rd,REG039,emi-48,3009,4004
+5010,Pooja Sharma,9876543249,504 Elm St,REG040,cash,3010,4005
+5011,Manoj Verma,9876543250,605 Maple Ave,REG041,emi-36,3011,4001
+5012,Seema Roy,9876543251,706 Cedar Rd,REG042,cash,3012,4002
+5013,Vijay Gupta,9876543252,807 Birch St,REG043,emi-48,3013,4003
+5014,Rekha Roy,9876543253,908 Oak Ave,REG044,cash,3014,4004
+5015,Suresh Kumar,9876543254,109 Pine Rd,REG045,emi-36,3015,4005
+3021,Priya Verma,9876543230,606 Park Street,REG021,emi-36,1041,2011
+3022,Gaurav Sahu,9876543231,707 Church Road,REG022,cash,1042,2012
+3023,Meena Roy,9876543232,808 Camac Street,REG023,emi-48,1043,2013
+3024,Vikram Patel,9876543233,909 Elgin Road,REG024,cash,1044,2014
+3025,Sneha Kumar,9876543234,1010 Theatre Road,REG025,emi-36,1045,2015
 
-Jessica_Miller 3002 19930220 "258_Valley_Lane" 22 20  
-4  
-10 2 2024 13000 Tata_Nexon 1  
-6 1 2024 48000 Jeep_GrandCherokee 3  
-5 1 2024 14000 Honda_WRV 1  
-12 1 2024 50000 Volvo_XC40 2  
-
-Matthew_Harris 3003 19880815 "369_River_Street" 26 24  
-4  
-20 1 2024 180000 BMW_i8 2  
-25 2 2024 26000 Nissan_Terrano 1  
-12 2 2024 55000 Mercedes_Benz 2  
-3 2 2024 10000 Maruti_Baleno 0  
-
-Lauren_Wright 3004 19910630 "480_Lake_Avenue" 23 21  
-4  
-8 1 2024 24000 Mahindra_XUV700 3  
-15 1 2024 20000 Toyota_Corolla 0  
-18 1 2024 56000 Land_Rover_Discovery 3  
-10 1 2024 12000 Hyundai_Venue 1  
-
-Patrick_Nelson 3005 19870425 "591_Mountain_Drive" 25 23  
-4  
-5 2 2024 28000 Toyota_Fortuner 3  
-22 1 2024 52000 Audi_A4 2  
-18 2 2024 17000 Skoda_Kushaq 1  
-22 1 2024 48000 Mercedes_Benz 2  
+Sold Cars
+VIN,Name,Color,Price,FuelType,CarType,PaymentType,SoldDate,SalespersonID
+3016,Hyundai i10,Blue,450000.00,Petrol,Hatchback,emi-48,2024-03-15,4001
+3017,Tata Nano,Silver,300000.00,Petrol,Hatchback,cash,2024-03-20,4002
+3018,Maruti Celerio,Black,500000.00,Petrol,Hatchback,emi-36,2024-03-25,4003
+3019,Honda Jazz,White,700000.00,Petrol,Hatchback,cash,2024-04-01,4004
+3020,Ford Freestyle,Red,800000.00,Petrol,Hatchback,emi-48,2024-04-05,4005
+3021,Volkswagen Ameo,Grey,900000.00,Petrol,Sedan,cash,2024-04-10,4001
+3022,Skoda Fabia,Brown,850000.00,Petrol,Hatchback,emi-36,2024-04-15,4002
+3023,Nissan Micra,Yellow,750000.00,Petrol,Hatchback,cash,2024-04-20,4003
+3024,Renault Triber,Orange,600000.00,Petrol,Hatchback,emi-48,2024-04-25,4004
+3025,Datsun Redi-GO,Green,400000.00,Petrol,Hatchback,cash,2024-05-01,4005
+3026,Mahindra e2o,Purple,700000.00,Electric,Hatchback,emi-36,2024-05-05,4001
+3027,Fiat Punto,Maroon,750000.00,Petrol,Hatchback,cash,2024-05-10,4002
+3028,Chevrolet Spark,Gold,500000.00,Petrol,Hatchback,emi-48,2024-05-15,4003
+3029,Mitsubishi Mirage,Navy Blue,800000.00,Petrol,Hatchback,cash,2024-05-20,4004
+3030,Hyundai Grand i10,Pink,600000.00,Petrol,Hatchback,emi-36,2024-05-25,4005
+1046,Maruti Dzire,Silver,700000.00,Petrol,Sedan,emi-48,2024-04-01,2011
+1047,Hyundai Xcent,White,650000.00,Petrol,Sedan,cash,2024-04-05,2012
+1048,Tata Zest,Grey,600000.00,Diesel,Sedan,emi-36,2024-04-10,2013
+1049,Ford Aspire,Red,750000.00,Petrol,Sedan,cash,2024-04-15,2014
+1050,Toyota Camry,Blue,1000000.00,Diesel,Sedan,emi-48,2024-04-20,2015
