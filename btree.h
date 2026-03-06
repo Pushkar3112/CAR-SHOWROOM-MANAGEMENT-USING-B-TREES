@@ -30,17 +30,19 @@ BTree *btree_open(const char *filepath);
 void btree_close(BTree *bt);
 
 /*
- * Insert `key` into the B-Tree.
+ * Insert `<key, value>` into the B-Tree.
+ * `value` is typically a file offset pointing to the full stored record.
  * Duplicates are silently ignored.
  * Returns 0 on success, -1 on error.
  */
-int btree_insert(BTree *bt, int key);
+int btree_insert(BTree *bt, int key, long value);
 
 /*
  * Search for `key`.
- * Returns 1 if found, 0 if not found.
+ * Returns the associated `value` (file offset) if found.
+ * Returns -1 if not found.
  */
-int btree_search(BTree *bt, int key);
+long btree_search(BTree *bt, int key);
 
 /*
  * Delete `key` from the B-Tree.

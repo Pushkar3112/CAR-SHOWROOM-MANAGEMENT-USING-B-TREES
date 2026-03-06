@@ -118,7 +118,7 @@ void run_benchmarks(int dataset_size)
     /* Insert */
     start = clock();
     for (int i = 0; i < dataset_size; i++)
-        btree_insert(bt, keys[i]);
+        btree_insert(bt, keys[i], (long)keys[i]);
     end = clock();
     bt_insert_time = (double)(end - start) / CLOCKS_PER_SEC;
 

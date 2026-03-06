@@ -49,6 +49,7 @@ static int split_child(BTree *bt, DiskNode *parent, int idx)
     /* Copy keys right of `mid` into sibling */
     for (int i = mid + 1; i < child.num_keys; i++) {
         sibling.keys[sibling.num_keys] = child.keys[i];
+        sibling.values[sibling.num_keys] = child.values[i];
         sibling.num_keys++;
     }
 
@@ -60,15 +61,18 @@ static int split_child(BTree *bt, DiskNode *parent, int idx)
     }
 
     int promoted_key = child.keys[mid];
+    long promoted_value = child.values[mid];
     child.num_keys = mid;  /* shrink original child */
 
     /* Shift parent's children and keys to make room */
     for (int i = parent->num_keys; i > idx; i--) {
         parent->keys[i]        = parent->keys[i - 1];
+        parent->values[i]      = parent->values[i - 1];
         parent->children[i + 1] = parent->children[i];
     }
 
     parent->keys[idx]        = promoted_key;
+    parent->values[idx]      = promoted_value;
     parent->children[idx + 1] = sib_offset;
     parent->num_keys++;
 
@@ -83,7 +87,7 @@ static int split_child(BTree *bt, DiskNode *parent, int idx)
 /* ================================================================== */
 /*  Insert key into a non-full node (recursive)                        */
 /* ================================================================== */
-static int insert_nonfull(BTree *bt, long node_offset, int key)
+static int insert_nonfull(BTree *bt, long node_offset, int key, long value)
 {
     DiskNode node;
     if (dm_read_node(bt->dm, node_offset, &node) != 0)
@@ -94,14 +98,18 @@ static int insert_nonfull(BTree *bt, long node_offset, int key)
         int i = node.num_keys - 1;
         while (i >= 0 && key < node.keys[i]) {
             node.keys[i + 1] = node.keys[i];
+            node.values[i + 1] = node.values[i];
             i--;
         }
 
-        /* Duplicate check */
-        if (i >= 0 && node.keys[i] == key)
-            return 0;  /* silently ignore duplicates */
+        /* Duplicate check - update value */
+        if (i >= 0 && node.keys[i] == key) {
+            node.values[i] = value;
+            return dm_write_node(bt->dm, &node);
+        }
 
         node.keys[i + 1] = key;
+        node.values[i + 1] = value;
         node.num_keys++;
 
         return dm_write_node(bt->dm, &node);
@@ -112,9 +120,11 @@ static int insert_nonfull(BTree *bt, long node_offset, int key)
     while (i >= 0 && key < node.keys[i])
         i--;
 
-    /* Duplicate check in internal node */
-    if (i >= 0 && node.keys[i] == key)
-        return 0;
+    /* Duplicate check in internal node - update value */
+    if (i >= 0 && node.keys[i] == key) {
+        node.values[i] = value;
+        return dm_write_node(bt->dm, &node);
+    }
 
     i++;
 
@@ -135,11 +145,14 @@ static int insert_nonfull(BTree *bt, long node_offset, int key)
         /* Decide which child to descend into after the split */
         if (key > node.keys[i])
             i++;
-        else if (key == node.keys[i])
-            return 0;  /* the promoted key was our key */
+        else if (key == node.keys[i]) {
+            /* The newly promoted key IS our key; just update the value */
+            node.values[i] = value;
+            return dm_write_node(bt->dm, &node);
+        }
     }
 
-    return insert_nonfull(bt, node.children[i], key);
+    return insert_nonfull(bt, node.children[i], key, value);
 }
 
 /* ================================================================== */
@@ -171,7 +184,7 @@ void btree_close(BTree *bt)
     free(bt);
 }
 
-int btree_insert(BTree *bt, int key)
+int btree_insert(BTree *bt, int key, long value)
 {
     if (!bt) return -1;
 
@@ -186,6 +199,7 @@ int btree_insert(BTree *bt, int key)
         root.is_leaf    = 1;
         root.num_keys   = 1;
         root.keys[0]    = key;
+        root.values[0]  = value;
 
         if (dm_write_node(bt->dm, &root) != 0) return -1;
 
@@ -221,15 +235,15 @@ int btree_insert(BTree *bt, int key)
         bt->dm->header.root_offset = new_root_offset;
         dm_write_header(bt->dm);
 
-        return insert_nonfull(bt, new_root_offset, key);
+        return insert_nonfull(bt, new_root_offset, key, value);
     }
 
-    return insert_nonfull(bt, bt->root_offset, key);
+    return insert_nonfull(bt, bt->root_offset, key, value);
 }
 
-int btree_search(BTree *bt, int key)
+long btree_search(BTree *bt, int key)
 {
-    if (!bt || bt->root_offset < 0) return 0;
+    if (!bt || bt->root_offset < 0) return -1;
 
     long current = bt->root_offset;
 
@@ -241,23 +255,29 @@ int btree_search(BTree *bt, int key)
         int i = find_pos(&node, key);
 
         if (i < node.num_keys && node.keys[i] == key)
-            return 1;  /* found */
+            return node.values[i];  /* found */
 
         if (node.is_leaf)
-            return 0;  /* not found */
+            return -1;  /* not found */
 
         current = node.children[i];
     }
 
-    return 0;
+    return -1;
 }
 
 /* ================================================================== */
 /*  Deletion helpers                                                   */
 /* ================================================================== */
 
+/* Helper structure to return both key and value */
+typedef struct {
+    int key;
+    long value;
+} KeyValue;
+
 /* Find the predecessor key: rightmost key in the left subtree */
-static int get_predecessor(BTree *bt, long offset)
+static KeyValue get_predecessor(BTree *bt, long offset)
 {
     DiskNode node;
     dm_read_node(bt->dm, offset, &node);
@@ -265,11 +285,12 @@ static int get_predecessor(BTree *bt, long offset)
     while (!node.is_leaf) {
         dm_read_node(bt->dm, node.children[node.num_keys], &node);
     }
-    return node.keys[node.num_keys - 1];
+    KeyValue kv = {node.keys[node.num_keys - 1], node.values[node.num_keys - 1]};
+    return kv;
 }
 
 /* Find the successor key: leftmost key in the right subtree */
-static int get_successor(BTree *bt, long offset)
+static KeyValue get_successor(BTree *bt, long offset)
 {
     DiskNode node;
     dm_read_node(bt->dm, offset, &node);
@@ -277,7 +298,8 @@ static int get_successor(BTree *bt, long offset)
     while (!node.is_leaf) {
         dm_read_node(bt->dm, node.children[0], &node);
     }
-    return node.keys[0];
+    KeyValue kv = {node.keys[0], node.values[0]};
+    return kv;
 }
 
 /* Forward declaration */
@@ -297,10 +319,12 @@ static void merge_children(BTree *bt, DiskNode *parent, int idx)
     int orig_child_keys = child.num_keys;
 
     child.keys[child.num_keys] = parent->keys[idx];
+    child.values[child.num_keys] = parent->values[idx];
     child.num_keys++;
 
     for (int i = 0; i < right_sib.num_keys; i++) {
         child.keys[child.num_keys] = right_sib.keys[i];
+        child.values[child.num_keys] = right_sib.values[i];
         child.num_keys++;
     }
 
@@ -311,6 +335,7 @@ static void merge_children(BTree *bt, DiskNode *parent, int idx)
 
     for (int i = idx; i < parent->num_keys - 1; i++) {
         parent->keys[i] = parent->keys[i + 1];
+        parent->values[i] = parent->values[i + 1];
         parent->children[i + 1] = parent->children[i + 2];
     }
     parent->num_keys--;
@@ -330,8 +355,10 @@ static void fill_child(BTree *bt, DiskNode *parent, int idx)
     if (idx > 0) {
         dm_read_node(bt->dm, parent->children[idx - 1], &left_sib);
         if (left_sib.num_keys > min_keys) {
-            for (int i = child.num_keys - 1; i >= 0; i--)
+            for (int i = child.num_keys - 1; i >= 0; i--) {
                 child.keys[i + 1] = child.keys[i];
+                child.values[i + 1] = child.values[i];
+            }
             if (!child.is_leaf) {
                 for (int i = child.num_keys; i >= 0; i--)
                     child.children[i + 1] = child.children[i];
@@ -339,7 +366,9 @@ static void fill_child(BTree *bt, DiskNode *parent, int idx)
             }
 
             child.keys[0] = parent->keys[idx - 1];
+            child.values[0] = parent->values[idx - 1];
             parent->keys[idx - 1] = left_sib.keys[left_sib.num_keys - 1];
+            parent->values[idx - 1] = left_sib.values[left_sib.num_keys - 1];
 
             child.num_keys++;
             left_sib.num_keys--;
@@ -356,13 +385,17 @@ static void fill_child(BTree *bt, DiskNode *parent, int idx)
         dm_read_node(bt->dm, parent->children[idx + 1], &right_sib);
         if (right_sib.num_keys > min_keys) {
             child.keys[child.num_keys] = parent->keys[idx];
+            child.values[child.num_keys] = parent->values[idx];
             if (!child.is_leaf)
                 child.children[child.num_keys + 1] = right_sib.children[0];
 
             parent->keys[idx] = right_sib.keys[0];
+            parent->values[idx] = right_sib.values[0];
 
-            for (int i = 0; i < right_sib.num_keys - 1; i++)
+            for (int i = 0; i < right_sib.num_keys - 1; i++) {
                 right_sib.keys[i] = right_sib.keys[i + 1];
+                right_sib.values[i] = right_sib.values[i + 1];
+            }
             if (!right_sib.is_leaf) {
                 for (int i = 0; i < right_sib.num_keys; i++)
                     right_sib.children[i] = right_sib.children[i + 1];
@@ -398,8 +431,10 @@ static int delete_key(BTree *bt, long offset, int key)
     if (idx < node.num_keys && node.keys[idx] == key) {
         /* Key found in this node */
         if (node.is_leaf) {
-            for (int i = idx; i < node.num_keys - 1; i++)
+            for (int i = idx; i < node.num_keys - 1; i++) {
                 node.keys[i] = node.keys[i + 1];
+                node.values[i] = node.values[i + 1];
+            }
             node.num_keys--;
             dm_write_node(bt->dm, &node);
             return 0;
@@ -409,19 +444,21 @@ static int delete_key(BTree *bt, long offset, int key)
         DiskNode left_child;
         dm_read_node(bt->dm, node.children[idx], &left_child);
         if (left_child.num_keys > min_keys) {
-            int pred = get_predecessor(bt, node.children[idx]);
-            node.keys[idx] = pred;
+            KeyValue pred = get_predecessor(bt, node.children[idx]);
+            node.keys[idx] = pred.key;
+            node.values[idx] = pred.value;
             dm_write_node(bt->dm, &node);
-            return delete_key(bt, node.children[idx], pred);
+            return delete_key(bt, node.children[idx], pred.key);
         }
 
         DiskNode right_child;
         dm_read_node(bt->dm, node.children[idx + 1], &right_child);
         if (right_child.num_keys > min_keys) {
-            int succ = get_successor(bt, node.children[idx + 1]);
-            node.keys[idx] = succ;
+            KeyValue succ = get_successor(bt, node.children[idx + 1]);
+            node.keys[idx] = succ.key;
+            node.values[idx] = succ.value;
             dm_write_node(bt->dm, &node);
-            return delete_key(bt, node.children[idx + 1], succ);
+            return delete_key(bt, node.children[idx + 1], succ.key);
         }
 
         /* Both children have min keys — merge them */

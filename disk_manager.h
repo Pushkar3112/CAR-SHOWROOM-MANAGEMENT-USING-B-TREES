@@ -40,6 +40,7 @@ typedef struct {
     int  num_keys;                    /* Number of keys currently stored */
     int  is_leaf;                     /* 1 if leaf, 0 otherwise         */
     int  keys[BTREE_MAX_KEYS];       /* Key array                      */
+    long values[BTREE_MAX_KEYS];     /* Value array (file offsets)     */
     long children[BTREE_MAX_CHILD];   /* File offsets of child nodes    */
     long self_offset;                 /* This node's own file offset    */
 } DiskNode;
